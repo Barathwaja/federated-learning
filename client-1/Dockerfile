@@ -1,24 +1,22 @@
-FROM ubuntu:22.04
+FROM python:3.9-slim
 
+ENV PYTHONUNBUFFERED 1
 
-RUN set -xe \
-    && apt-get update -y \
-    && apt-get install python3-pip -y \
-    && apt-get install ufw vim net-tools -y
-    
-RUN pip install --upgrade pip
-
-
-LABEL maintainer="sbarathwaj4@gmail.com"
-
+# Create a directory for your application
 ARG APP_DIR=/usr/src/app
 
 WORKDIR $APP_DIR
 
-COPY . .
+# Copy the requirements file into the container
+COPY requirements.txt $APP_DIR/
 
+# Install any required dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# EXPOSE 6000
+# Copy your Python application code into the container
+COPY tf-client.py $APP_DIR/
 
-ENTRYPOINT ["python3", "./client.py"]
+COPY 0d02a8_*.csv $APP_DIR/
+
+# Specify the command to run when the container starts
+CMD ["python", "tf-client.py"]

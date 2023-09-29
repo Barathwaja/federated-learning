@@ -1,26 +1,20 @@
-FROM ubuntu:22.04
+FROM python:3.9-slim
 
-RUN set -xe \
-    && apt-get update -y \
-    && apt-get install python3-pip -y \
-    && apt-get install vim net-tools -y
-    
-RUN pip install --upgrade pip
+ENV PYTHONUNBUFFERED 1
 
-# Allow all incoming and outgoing traffic by default
-# RUN ufw default allow incoming
-# RUN ufw default allow outgoing
-
-LABEL maintainer="sbarathwaj4@gmail.com"
-
+# Create a directory for your application
 ARG APP_DIR=/usr/src/app
 
 WORKDIR $APP_DIR
 
-COPY . .
+# Copy the requirements file into the container
+COPY requirements.txt $APP_DIR/
 
+# Install any required dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# EXPOSE 6000
+# Copy your Python application code into the container
+COPY . $APP_DIR/
 
-ENTRYPOINT ["python3", "./server.py"]
+# Specify the command to run when the container starts
+CMD ["python", "server.py"]

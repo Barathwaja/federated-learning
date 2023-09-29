@@ -1,5 +1,0 @@
-flwr
-numpy
-pandas
-scikit-learn
-tensorflow

@@ -11,7 +11,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 SERVER_ADDR = "0.0.0.0:9092"
 TRAIN_SIZE = 0.75
-FLIGHT_NUMBER = "0d02a8"
+FLIGHT_NUMBER = "a007c6"
 
 folder_path = './data'
 
@@ -40,13 +40,20 @@ def get_train_test_split(client1: str):
         df = pd.read_csv(file_path)
         client1_df = pd.concat([client1_df, df], ignore_index=True)
 
+    print("NA Exists:", client1_df.isnull().values.any())
+    
+    client1_df = client1_df.dropna()
+    client1_df = client1_df.reset_index(drop=True)
+    
+    print("After cleaning:", client1_df.isnull().values.any())
+
     client1_df = client1_df.sort_values(by='time', ascending=True)
 
     drop_columns = ['Unnamed: 0', 'icao24']
     client1_df = client1_df.drop(drop_columns, axis=1)
 
-    y_client1 = client1_df['signature_label']
-    X_client1 = client1_df.drop('signature_label', axis=1)
+    y_client1 = client1_df['signature']
+    X_client1 = client1_df.drop('signature', axis=1)
 
     return X_client1, y_client1
 
@@ -69,8 +76,8 @@ if __name__ == "__main__":
     ])
     
     # Compile model
-    model.compile(loss='binary_crossentropy', 
-                  optimizer=tf.keras.optimizers.Adam(learning_rate=3), 
+    model.compile(loss=tf.keras.losses.BinaryCrossentropy(), 
+                  optimizer=tf.keras.optimizers.Adam(), 
                   metrics=[tf.keras.metrics.Accuracy()])
 
     class FlightClient(fl.client.NumPyClient):
@@ -87,6 +94,7 @@ if __name__ == "__main__":
             model.set_weights(parameters)
             history = model.fit(X_train_scaled, y, 
                       epochs=10, 
+                      shuffle=False,
                       batch_size=32)
             
             print(history.history.keys())

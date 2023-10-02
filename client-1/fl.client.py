@@ -94,8 +94,8 @@ if __name__ == "__main__":
     
     # Compile model
     model.compile(loss=tf.keras.losses.BinaryCrossentropy(),
-                  optimizer=tf.keras.optimizers.Adam(), 
-                  metrics=[tf.keras.metrics.Accuracy()])
+                  optimizer=tf.keras.optimizers.Nadam(), 
+                  metrics=[tf.keras.metrics.BinaryAccuracy()])
 
     class FlightClient(fl.client.NumPyClient):
         def __init__(self) -> None:

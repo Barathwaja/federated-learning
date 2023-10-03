@@ -74,8 +74,10 @@ if __name__ == "__main__":
 
     model = tf.keras.Sequential([
             tf.keras.layers.InputLayer(input_shape=(X_input_shape, )),
-            tf.keras.layers.Dense(64),
-            tf.keras.layers.Dense(32),
+            tf.keras.layers.Dense(64, activation='relu', 
+                                #   kernel_initializer='zeros', 
+                                  use_bias=False),
+            tf.keras.layers.Dense(32, activation='relu', use_bias=False),
             tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
@@ -104,13 +106,14 @@ if __name__ == "__main__":
 
         def fit(self, parameters, config):
             self.num_of_round = self.num_of_round + 1
+            print(f"Round - {self.num_of_round}")
             model.set_weights(parameters)
             history = model.fit(X_train_scaled, y_train, 
                       epochs=10, 
-                      shuffle=False,
-                      batch_size=32)
+                    #   shuffle=False,
+                      batch_size=10)
             
-            print(history.history.keys())
+            # print(history.history.keys())
 
             # summarize history for accuracy
             # plt.plot(history.history['accuracy'])

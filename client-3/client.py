@@ -20,7 +20,7 @@ def read_data():
     dfs = []
 
     for filename in os.listdir(folder_path):
-        if filename.endswith('a14af7_rogue.csv'):
+        if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
             df = pd.read_csv(file_path)
 
@@ -44,7 +44,7 @@ def read_data():
     # combined_df['minute'] = combined_df['datetime'].dt.minute
     # combined_df['hour'] = combined_df['datetime'].dt.hour
 
-    columns_to_drop = ['Unnamed: 0','row_id', 'flight_trip','label','datetime']
+    columns_to_drop = ['row_id', 'datetime', 'flight_trip', 'label', 'Unnamed: 0']
 
     y = combined_df['label']
     X = combined_df.drop(columns_to_drop, axis=1)
@@ -62,13 +62,11 @@ def get_train_test_split(X, y):
 if __name__ == "__main__":
     X, y = read_data()
 
-    print()
-    X_train, X_test, y_train, y_test = get_train_test_split(X, y)
+    # X_train, X_test, y_train, y_test = get_train_test_split(X, y)
 
-    print(X_train.head())
     scaler = MinMaxScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    X_train_scaled = scaler.fit_transform(X)
+    # X_test_scaled = scaler.transform(X_test)
     
     X_input_shape = X_train_scaled.shape[1]
     print(X_train_scaled.shape)
@@ -76,7 +74,8 @@ if __name__ == "__main__":
 
     model = tf.keras.Sequential([
             tf.keras.layers.InputLayer(input_shape=(X_input_shape, )),
-            tf.keras.layers.Dense(10, activation='relu'),
+            tf.keras.layers.Dense(64),
+            tf.keras.layers.Dense(32),
             tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
@@ -105,40 +104,39 @@ if __name__ == "__main__":
 
         def fit(self, parameters, config):
             self.num_of_round = self.num_of_round + 1
-            print(f"Round - {self.num_of_round}")
             model.set_weights(parameters)
-            history = model.fit(X_train_scaled, y_train, 
-                      epochs=10,
-                    #   shuffle=False,
-                      batch_size=10)
+            history = model.fit(X_train_scaled, y, 
+                      epochs=10, 
+                      shuffle=False,
+                      batch_size=32)
             
-            # print(history.history.keys())
+            print(history.history.keys())
 
             # summarize history for accuracy
-            # plt.plot(history.history['accuracy'])
-            # plt.plot(self.num_of_round)
-            # plt.title('model accuracy')
-            # plt.ylabel('accuracy')
-            # plt.xlabel('num of rounds')
-            # plt.legend(['train', 'rounds'], loc='upper left')
-            # plt.savefig('./line_plot-accuracy.png')
-            # plt.show()
+            plt.plot(history.history['binary_accuracy'])
+            plt.plot(self.num_of_round)
+            plt.title('model binary_accuracy')
+            plt.ylabel('binary_accuracy')
+            plt.xlabel('num of rounds')
+            plt.legend(['train', 'rounds'], loc='upper left')
+            plt.savefig('./line_plot-accuracy.png')
+            #plt.show()
 
             # summarize history for loss
-            # plt.plot(history.history['loss'])
-            # plt.plot(self.num_of_round)
-            # plt.title('model loss')
-            # plt.ylabel('loss')
-            # plt.xlabel('num_of_rounds')
-            # plt.legend(['train', 'test'], loc='upper left')
-            # plt.savefig('./line_plot-loss.png')
-            # # plt.show()
+            plt.plot(history.history['loss'])
+            plt.plot(self.num_of_round)
+            plt.title('model loss')
+            plt.ylabel('loss')
+            plt.xlabel('num_of_rounds')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.savefig('./line_plot-loss.png')
+            # plt.show()
             return model.get_weights(), len(X_train_scaled), {}
 
-        def evaluate(self, parameters, config):
-            model.set_weights(parameters)
-            loss, accuracy = model.evaluate(X_test_scaled, y_test)
-            return loss, len(X_test_scaled), {"accuracy": accuracy}
+        # def evaluate(self, parameters, config):
+        #     model.set_weights(parameters)
+        #     loss, accuracy = model.evaluate(X_test_scaled, y_test)
+        #     return loss, len(X_test_scaled), {"accuracy": accuracy}
 
 
     # Start Flower client

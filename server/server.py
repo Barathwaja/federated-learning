@@ -6,8 +6,9 @@ strategy = fl.server.strategy.FedAvg(
     min_fit_clients=2
 )
 
+print(strategy)
 server = fl.driver.start_driver(
     # server_address="0.0.0.0:9091",
-    config=fl.server.ServerConfig(num_rounds=10),
-    strategy=strategy
+    config=fl.server.ServerConfig(num_rounds=3),
+    # strategy=strategy
 )

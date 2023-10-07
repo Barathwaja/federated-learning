@@ -52,32 +52,42 @@ if __name__ == "__main__":
 
     ################ kMeans #################
 
-    km = TimeSeriesKMeans(n_clusters=1, 
+    model = TimeSeriesKMeans(n_clusters=1, 
                         verbose=False, 
                         metric='euclidean',
-                        random_state=42,)
-    km.fit(X)
-
+                        random_state=2,
+                        max_iter=len(X))
+    
     ################ kMeans #################
 
-    # print(f'Cluster - {km.cluster_centers_.shape}')
-    # print(f'distance - {km.inertia_}')
+    # print(f'Cluster - {model.cluster_centers_.shape}')
+    # print(f'distance - {model.inertia_}')
 
     class kMeansClient(fl.client.NumPyClient):
-        def __init__(self) -> None:
-            self.num_of_round = 0
+        def __init__(self, model) -> None:
+            self.model = model
 
         def get_parameters(self, config):
-            if hasattr(km, "cluster_centers_"):
-                return np.array(km.cluster_centers_)
+            params = []
 
+            if hasattr(self.model, "inertia_"):
+                print(self.model.inertia_)
+                params.append(
+                    self.model.inertia_
+                )
+            return params
+        
         def fit(self, parameters, config):
-            empty_3d = np.empty((2, 2, 3), dtype=complex)
-            if hasattr(km, "cluster_centers_"):
-                print(parameters)
-                # km.cluster_centers_ = parameters
-            km.fit(X)
-            return [], 0, {}
+            if hasattr(self.model, "inertia_"):
+                print(f"params {parameters}")
+                # self.model.cluster_centers_ = config[0]
+            self.model.fit(X)  # You should have X defined or passed as an argument
+            # print(f"after {self.model.__dict__}")
+            # fit_called = False
+
+            # print(parameters)
+            return self.get_parameters(self.model), 0, {}
+
 
         # def evaluate(self, parameters, config):
         #     model.set_weights(parameters)
@@ -85,4 +95,4 @@ if __name__ == "__main__":
         #     return loss, len(X_valid), {"accuracy": accuracy}
 
     fl.client.start_numpy_client(server_address=SERVER_ADDR, 
-                                 client=kMeansClient())
+                                 client=kMeansClient(model))

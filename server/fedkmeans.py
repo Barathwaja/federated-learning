@@ -22,8 +22,9 @@ from flwr.server.client_proxy import ClientProxy
 
 # from .aggregate import aggregate, weighted_loss_avg
 from flwr.server.strategy import Strategy
-
+from tslearn.clustering import TimeSeriesKMeans
 from sklearn.cluster import KMeans
+import numpy as np
 
 WARNING_MIN_AVAILABLE_CLIENTS_TOO_LOW = """
 Setting `min_available_clients` lower than `min_fit_clients` or
@@ -128,7 +129,6 @@ class FedKMeans(Strategy):
     ) -> List[Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
         config = {}
-        print(parameters)
         # if self.on_fit_config_fn is not None:
         #     # Custom fit config function provided
         #     config = self.on_fit_config_fn(server_round)
@@ -187,7 +187,8 @@ class FedKMeans(Strategy):
             return None, {}
 
         print("AGGREEE")
-        # # Convert results
+
+        # Convert results
         # weights_results = [
         #     (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
         #     for _, fit_res in results
@@ -196,6 +197,27 @@ class FedKMeans(Strategy):
 
         parameters_aggregated = []
 
+        # temp = [
+        #     (parameters_to_ndarrays(fit_res.parameters))
+        #     for _, fit_res in results
+        # ]
+        # print(temp)
+
+        all_converted_arrays = []
+        for _, fit_res in results:
+            all_converted_arrays.extend(
+                parameters_to_ndarrays(fit_res.parameters)
+            )
+
+        print(np.array(all_converted_arrays))
+
+        model = TimeSeriesKMeans(
+                        init=np.array(all_converted_arrays), 
+                        verbose=False, 
+                        metric='euclidean')
+        
+        print(model.__dict__)
+        
         # # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         # if self.fit_metrics_aggregation_fn:

@@ -70,18 +70,26 @@ if __name__ == "__main__":
         def get_parameters(self, config):
             params = []
 
-            if hasattr(self.model, "inertia_"):
-                print(self.model.inertia_)
+            # if hasattr(self.model, "inertia_"):
+            #     print(self.model.inertia_)
+            #     params.append(
+            #         self.model.inertia_
+            #     )
+            # return params
+
+            if hasattr(self.model, "cluster_centers_"):
+                print(self.model.cluster_centers_)
                 params.append(
-                    self.model.inertia_
+                    self.model.cluster_centers_
                 )
             return params
         
         def fit(self, parameters, config):
-            if hasattr(self.model, "inertia_"):
+            print(self.model.__dict__)
+            if hasattr(self.model, "cluster_centers_"):
                 print(f"params {parameters}")
                 # self.model.cluster_centers_ = config[0]
-            self.model.fit(X)  # You should have X defined or passed as an argument
+            self.model.fit(X, y)  # You should have X defined or passed as an argument
             # print(f"after {self.model.__dict__}")
             # fit_called = False
 

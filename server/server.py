@@ -11,7 +11,10 @@ from fedavg import FedAvg
 #     k_metrics='euclidean'
 # )
 
-strategy = FedKMeans()
+strategy = FedKMeans(
+    min_available_clients=2,
+    min_fit_clients=2
+)
 
 server = fl.driver.start_driver(
     # server_address="0.0.0.0:9091",

@@ -53,7 +53,7 @@ if __name__ == "__main__":
     ################ kMeans #################
 
     model = TimeSeriesKMeans(n_clusters=1,
-                            verbose=False, 
+                            verbose=True, 
                             metric='euclidean',
                             random_state=2,
                             max_iter=len(X))
@@ -70,30 +70,26 @@ if __name__ == "__main__":
         def get_parameters(self, config):
             params = []
 
-            # if hasattr(self.model, "inertia_"):
-            #     print(self.model.inertia_)
-            #     params.append(
-            #         self.model.inertia_
-            #     )
-            # return params
+            print("params")
 
             if hasattr(self.model, "cluster_centers_"):
-                print(self.model.cluster_centers_)
                 params.append(
                     self.model.cluster_centers_
                 )
             return params
         
         def fit(self, parameters, config):
+            print("fit")
             if hasattr(self.model, "cluster_centers_"):
-                print(f"params {parameters}")
-                # self.model.cluster_centers_ = config[0]
-            self.model.fit(X,y)  # You should have X defined or passed as an argument
-            # print(f"after {self.model.__dict__}")
-            # fit_called = False
+                my_array = np.array(parameters)
+                # self.model.init = np.asarray(my_array)
+                self.model.init = my_array
+                self.model.fit(X)
+            
+            self.model.fit(X)
+            print(self.model.__dict__)
 
-            # print(parameters)
-            return self.get_parameters(self.model), 0, {}
+            return self.get_parameters(self.model), len(X), {}
 
 
         # def evaluate(self, parameters, config):

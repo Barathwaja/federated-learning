@@ -88,15 +88,16 @@ if __name__ == "__main__":
             self.num_of_round = 0
 
         def get_parameters(self, config):
+            print("params")
             return model.get_weights()
 
         def fit(self, parameters, config):
-            print(f"ROUND - {self.num_of_round}")
-            self.num_of_round = self.num_of_round + 1
-            print('-' * 3)
-            print(f"Param - {parameters}")
-            print('-' * 3)
-
+            # print(f"ROUND - {self.num_of_round}")
+            # self.num_of_round = self.num_of_round + 1
+            # print('-' * 3)
+            # print(f"Param - {parameters}")
+            # print('-' * 3)
+            print("fit")
             model.set_weights(parameters)
             model.fit(X, y,
                 epochs = 100, )

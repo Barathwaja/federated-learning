@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     ################ kMeans #################
 
-    model = TimeSeriesKMeans(n_clusters=1,
+    model = TimeSeriesKMeans(n_clusters=2,
                             verbose=True, 
                             metric='euclidean',
                             random_state=2,

@@ -62,6 +62,11 @@ def aggregate(results: List[Tuple[NDArrays, int]]) -> NDArrays:
         [layer[0] * num_examples for layer in weights] for weights, num_examples in results
     ]
 
+    for layer_updates in zip(*weighted_weights):
+        print(f"Ex - {num_examples_total}")
+        print(f"sasa - {layer_updates}")
+        print(f"CALC - {reduce(np.add, layer_updates) / num_examples_total}")
+
     # Compute average weights of each layer
     weights_prime: NDArrays = [
         reduce(np.add, layer_updates) / num_examples_total

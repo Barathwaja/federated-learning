@@ -20,8 +20,8 @@ from keras.metrics import RootMeanSquaredError
 from keras.optimizers import Adam 
 
 
-
-SERVER_ADDR = "0.0.0.0:9092"
+# SERVER_ADDR = "0.0.0.0:9092"
+SERVER_ADDR = "192.0.0.101:9092"
 TRAIN_SIZE = 0.75
 NUM_OF_SAMPLES = 0
 INPUT_SEQ = 4
@@ -33,13 +33,16 @@ def read_data():
     dfs = []
 
     for filename in os.listdir(folder_path):
-        # if filename.endswith('one_trip.csv'): #Change to all_trip,
-        if filename.startswith('testing_flightsa7124d_0.csv'): #Change to all_trip, 
+        if filename.endswith('_0.csv'): #ONE TRIP,
+        # if filename.startswith('testing_flightsa7124d_0.csv'): #Change to all_trip, 
             file_path = os.path.join(folder_path, filename)
-            print(file_path)
+            print(f"File Path - {file_path}")
             df = pd.read_csv(file_path)
 
+            print(df)
             dfs.append(df)
+    
+    print(dfs)
 
     combined_df = pd.concat(dfs, ignore_index=True)
     
@@ -55,7 +58,8 @@ def read_data():
         df_X.append(row)
         label = df_np[i + INPUT_SEQ]
         df_y.append(label)
-        
+    
+    print(f"SHAPE - {len(df_X)}")
     return np.array(df_X), np.array(df_y)
 
 
@@ -66,11 +70,10 @@ if __name__ == "__main__":
     
     model = Sequential()
 
-    n_features = 1              # number of input variables used for forecast (here, only 1 i.e. temperature)
+    n_features = 1
     
     model.add(InputLayer((INPUT_SEQ, n_features)))
     model.add(LSTM(10, return_sequences = True))
-    # model1.add(LSTM(50))
     model.add(Dense(8, activation = 'relu'))
     model.add(Dense(1))
 
@@ -92,12 +95,8 @@ if __name__ == "__main__":
             return model.get_weights()
 
         def fit(self, parameters, config):
-            # print(f"ROUND - {self.num_of_round}")
-            # self.num_of_round = self.num_of_round + 1
-            # print('-' * 3)
-            # print(f"Param - {parameters}")
-            # print('-' * 3)
-            print("fit")
+            print(f"Round - {self.num_of_round}")
+            self.num_of_round = self.num_of_round + 1
             model.set_weights(parameters)
             model.fit(X, y,
                 epochs = 100, )

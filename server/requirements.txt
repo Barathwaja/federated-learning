@@ -1,0 +1,6 @@
+flwr==1.5.0
+numpy==1.24.2
+pandas
+scikit-learn
+tensorflow
+memory_profiler

@@ -1,0 +1,13 @@
+,window,mean_geoaltitude
+0,"Row(start=datetime.datetime(2022, 2, 21, 10, 36), end=datetime.datetime(2022, 2, 21, 10, 38))",1059.18
+1,"Row(start=datetime.datetime(2022, 2, 21, 10, 38), end=datetime.datetime(2022, 2, 21, 10, 40))",1043.6225000000004
+2,"Row(start=datetime.datetime(2022, 2, 21, 10, 40), end=datetime.datetime(2022, 2, 21, 10, 42))",1008.3800000000016
+3,"Row(start=datetime.datetime(2022, 2, 21, 10, 42), end=datetime.datetime(2022, 2, 21, 10, 44))",1037.0184999999997
+4,"Row(start=datetime.datetime(2022, 2, 21, 10, 44), end=datetime.datetime(2022, 2, 21, 10, 46))",1056.576499999998
+5,"Row(start=datetime.datetime(2022, 2, 21, 10, 46), end=datetime.datetime(2022, 2, 21, 10, 48))",1041.7174999999988
+6,"Row(start=datetime.datetime(2022, 2, 21, 10, 48), end=datetime.datetime(2022, 2, 21, 10, 50))",1030.350999999998
+7,"Row(start=datetime.datetime(2022, 2, 21, 10, 50), end=datetime.datetime(2022, 2, 21, 10, 52))",990.8540000000024
+8,"Row(start=datetime.datetime(2022, 2, 21, 10, 52), end=datetime.datetime(2022, 2, 21, 10, 54))",851.9160000000006
+9,"Row(start=datetime.datetime(2022, 2, 21, 10, 54), end=datetime.datetime(2022, 2, 21, 10, 56))",711.199999999999
+10,"Row(start=datetime.datetime(2022, 2, 21, 10, 56), end=datetime.datetime(2022, 2, 21, 10, 58))",693.4199999999986
+11,"Row(start=datetime.datetime(2022, 2, 21, 10, 58), end=datetime.datetime(2022, 2, 21, 11, 0))",693.4199999999987

@@ -17,7 +17,7 @@
 Paper: arxiv.org/abs/1602.05629
 """
 
-
+from memory_profiler import profile
 from logging import WARNING, DEBUG
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -219,6 +219,7 @@ class FedAvg(Strategy):
         # Return client/config pairs
         return [(client, evaluate_ins) for client in clients]
 
+    @profile
     def aggregate_fit(
         self,
         server_round: int,
@@ -226,7 +227,6 @@ class FedAvg(Strategy):
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
         """Aggregate fit results using weighted average."""
-        print("Inside Agg")
         if not results:
             return None, {}
         # Do not aggregate if there are failures and failures are not accepted
@@ -239,9 +239,6 @@ class FedAvg(Strategy):
             for _, fit_res in results
         ]
         parameters_aggregated = ndarrays_to_parameters(aggregate(weights_results))
-
-        print("Aggregated")
-        print(parameters_aggregated)
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.fit_metrics_aggregation_fn:

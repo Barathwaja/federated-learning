@@ -20,8 +20,8 @@ from keras.metrics import RootMeanSquaredError
 from keras.optimizers import Adam 
 
 
-# SERVER_ADDR = "0.0.0.0:9092"
-SERVER_ADDR = "192.0.0.101:9092"
+SERVER_ADDR = "0.0.0.0:9092"
+#SERVER_ADDR = "192.0.0.101:9092"
 TRAIN_SIZE = 0.75
 NUM_OF_SAMPLES = 0
 INPUT_SEQ = 4
@@ -33,8 +33,8 @@ def read_data():
     dfs = []
 
     for filename in os.listdir(folder_path):
-        if filename.endswith('_0.csv'): #ONE TRIP,
-        # if filename.startswith('testing_flightsa7124d_0.csv'): #Change to all_trip, 
+        #if filename.endswith('_0.csv'): #ONE TRIP,
+        if filename.startswith('0d02a8.csv'): #Change to all_trip, 
             file_path = os.path.join(folder_path, filename)
             print(f"File Path - {file_path}")
             df = pd.read_csv(file_path)

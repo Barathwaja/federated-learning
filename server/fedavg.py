@@ -171,8 +171,8 @@ class FedAvg(Strategy):
     ) -> List[Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
 
-        print("SERVER")
-        print(parameters)
+        # print("SERVER")
+        # print(parameters)
         config = {}
         if self.on_fit_config_fn is not None:
             # Custom fit config function provided
@@ -187,9 +187,9 @@ class FedAvg(Strategy):
             num_clients=sample_size, min_num_clients=min_num_clients
         )
 
-        print("CLIENTS")
-        for client in clients:
-            print(client, fit_ins)
+        # print("CLIENTS")
+        # for client in clients:
+        #     print(client, fit_ins)
         # Return client/config pairs
         return [(client, fit_ins) for client in clients]
 

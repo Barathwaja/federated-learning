@@ -1,5 +1,7 @@
 FROM python:3.9-slim
 
+RUN apt-get update && apt-get install -y vim
+
 ENV PYTHONUNBUFFERED 1
 
 ARG APP_DIR=/usr/src/app
@@ -16,4 +18,4 @@ COPY geo.lstm.py $APP_DIR/
 COPY data/geoaltitude/*.csv $APP_DIR/data/geoaltitude/
 
 # Specify the command to run when the container starts
-CMD ["python", "geo.lstm.py"]
+# CMD ["python", "geo.lstm.py"]

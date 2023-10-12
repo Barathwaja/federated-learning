@@ -3,8 +3,8 @@ import sys
 import socket
 # from fed_knn import FedKnn
 # from fedkmeans import FedKMeans
-# from fedavg_modified import FedAvg
-from fedavg import FedAvg
+from fedavg_modified import FedAvg
+#from fedavg import FedAvg
 import time
 
 

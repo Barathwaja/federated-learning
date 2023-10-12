@@ -19,3 +19,7 @@ This will consists of all the Federated Learning codes
 - docker run -it --network=custom-net --ip=192.0.0.101 fl-server /bin/bash
 - docker run -it --network=custom-net --ip=192.0.0.102 fl-client-1 /bin/bash
 - docker run -it --network=custom-net --ip=192.0.0.103 fl-client-2 /bin/bash
+
+- docker run -it --network=custom-net --ip=192.0.0.101 fl-server-km /bin/bash
+- docker run -it --network=custom-net --ip=192.0.0.102 fl-client-km-1 /bin/bash
+- docker run -it --network=custom-net --ip=192.0.0.103 fl-client-km-2 /bin/bash

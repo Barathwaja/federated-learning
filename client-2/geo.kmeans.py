@@ -8,7 +8,8 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
 from tslearn.clustering import TimeSeriesKMeans
 
-SERVER_ADDR = "0.0.0.0:9092"
+#SERVER_ADDR = "0.0.0.0:9092"
+SERVER_ADDR = "192.0.0.101:9092"
 TRAIN_SIZE = 0.75
 NUM_OF_SAMPLES = 0
 INPUT_SEQ = 4

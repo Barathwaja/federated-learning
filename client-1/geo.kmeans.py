@@ -20,8 +20,8 @@ def read_data():
     dfs = []
 
     for filename in os.listdir(folder_path):
-        # if filename.endswith('one_trip.csv'): #Change to all_trip,
-        if filename.startswith('testing_flightsa7124d_0.csv'): #Change to all_trip, 
+        if filename.endswith('_0.csv'): #Change to all_trip,
+        #if filename.startswith('testing_flightsa7124d_0.csv'): #Change to all_trip, 
             file_path = os.path.join(folder_path, filename)
             print(file_path)
             df = pd.read_csv(file_path)
@@ -52,12 +52,12 @@ if __name__ == "__main__":
 
     ################ kMeans #################
 
-    model = TimeSeriesKMeans(n_clusters=1, 
-                        verbose=True, 
-                        metric='euclidean',
-                        random_state=2,
-                        max_iter=len(X))
     
+    model = TimeSeriesKMeans(n_clusters=2,
+                             verbose=False,
+                             metric='euclidean', 
+                             random_state=2)
+
     ################ kMeans #################
 
     # print(f'Cluster - {model.cluster_centers_.shape}')
@@ -77,14 +77,20 @@ if __name__ == "__main__":
             return params
         
         def fit(self, parameters, config):
-            print("fit")
-        
+            
             if hasattr(self.model, "cluster_centers_"):
                 my_array = np.array(parameters)
+                
+                print("ARR")
+                print(my_array[0].shape)
+                print(my_array.shape)
+                print(self.model.cluster_centers_.shape)
+                
                 if hasattr(my_array, "__array__"):
-                    print("T")
-                    self.model.init = my_array
-                    self.model.fit(X)
+                    # self.model.cluster_centers_ = my_array
+                    self.model.init = my_array[0]
+                    # self.model.fit(X)
+            
             
             self.model.fit(X)
             print(self.model.__dict__)

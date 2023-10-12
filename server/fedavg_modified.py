@@ -57,21 +57,30 @@ def aggregate(results: List[Tuple[NDArrays, int]]) -> NDArrays:
     # Calculate the total number of examples used during training
     num_examples_total = sum([num_examples for _, num_examples in results])
 
+    print(num_examples_total)
+
+    print(results)
+
     # Create a list of weights, each multiplied by the related number of examples
     weighted_weights = [
-        [layer[0] * num_examples for layer in weights] for weights, num_examples in results
+        [layer * num_examples for layer in weights] for weights, num_examples in results
     ]
 
-    for layer_updates in zip(*weighted_weights):
-        print(f"Ex - {num_examples_total}")
-        print(f"sasa - {layer_updates}")
-        print(f"CALC - {reduce(np.add, layer_updates) / num_examples_total}")
+    for weights, num_examples in results:
+        for layer in weights:
+            print("layers")
+            print(layer * num_examples)
+            # print(num_examples)
+            # print(layer[0] * num_examples)
 
     # Compute average weights of each layer
     weights_prime: NDArrays = [
         reduce(np.add, layer_updates) / num_examples_total
         for layer_updates in zip(*weighted_weights)
     ]
+
+    # print("Weights Param")
+    # print(weights_prime)
 
     return weights_prime
 

@@ -17,7 +17,6 @@
 Paper: arxiv.org/abs/1602.05629
 """
 
-from memory_profiler import profile
 from logging import WARNING, DEBUG
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -219,7 +218,7 @@ class FedAvg(Strategy):
         # Return client/config pairs
         return [(client, evaluate_ins) for client in clients]
 
-    @profile
+
     def aggregate_fit(
         self,
         server_round: int,

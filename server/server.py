@@ -1,5 +1,4 @@
 import flwr as fl
-import sys
 import socket
 # from fed_knn import FedKnn
 # sfrom fedkmeans import FedKMeans
@@ -8,11 +7,38 @@ from fedavg import FedAvg
 import time
 
 
-IP_ADDR = socket.gethostbyname((socket.gethostname()))
-PORT = 9092
+import os
+import flwr as fl
+import numpy as np
+import pandas as pd
 
-SERVER_ADDR = "0.0.0.0:9092"
-#SERVER_ADDR = f'{IP_ADDR}:{PORT}'
+import tensorflow as tf
+import argparse
+
+parser = argparse.ArgumentParser(description="A simple command-line")
+
+# Add arguments
+parser.add_argument('--ip', 
+                    help='Provide the IP address', 
+                    default=socket.gethostbyname((socket.gethostname())), 
+                    required=False)
+parser.add_argument('--port', 
+                    help='Provide the Port address', 
+                    default="9092", 
+                    required=False)
+parser.add_argument('--num_rounds', 
+                    help='Provide the Time-Series Window Size', 
+                    default=3, 
+                    required=False)
+
+args = parser.parse_args()
+
+SERVER_ADDR = f'{args.ip}:{args.port}'
+NUM_ROUNDS = args.num_rounds
+
+
+
+SERVER_ADDR = f'{args.ip}:{args.port}'
 
 print(f"server addr - {SERVER_ADDR}")
 
@@ -23,19 +49,13 @@ strategy = FedAvg(
     min_fit_clients=2
 )
 
-# server = fl.driver.start_driver(
-#     # server_address="0.0.0.0:9091",
-#     config=fl.server.ServerConfig(num_rounds=2),
-#     strategy=strategy,
-# )
-
 print("--------------------")
 print(f"START TIME - {start_time}")
 
 
 fl.server.start_server(
     server_address=SERVER_ADDR,
-    config=fl.server.ServerConfig(num_rounds=3),
+    config=fl.server.ServerConfig(num_rounds=NUM_ROUNDS),
     strategy=strategy,
 )
 

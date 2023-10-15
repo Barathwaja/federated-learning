@@ -25,6 +25,7 @@ SERVER_ADDR = "0.0.0.0:9092"
 TRAIN_SIZE = 0.75
 NUM_OF_SAMPLES = 0
 INPUT_SEQ = 4
+COLUMN_NAME = 'geoaltitude'
 
 def read_data():
     global NUM_OF_SAMPLES
@@ -34,7 +35,7 @@ def read_data():
 
     for filename in os.listdir(folder_path):
         #if filename.endswith('_0.csv'): #ONE TRIP,
-        if filename.startswith('a64ef7.csv'): #Change to all_trip, 
+        if filename.startswith('adc0fb.csv'): #Change to all_trip, 
             file_path = os.path.join(folder_path, filename)
             df = pd.read_csv(file_path)
 
@@ -43,9 +44,9 @@ def read_data():
     combined_df = pd.concat(dfs, ignore_index=True)
     
     # Drop NaN
-    combined_df = combined_df.dropna(subset=['mean_geoaltitude'])
+    combined_df = combined_df.dropna(subset=[COLUMN_NAME])
 
-    df_np = combined_df['mean_geoaltitude'].to_numpy()
+    df_np = combined_df[COLUMN_NAME].to_numpy()
     df_X = []
     df_y = []
     

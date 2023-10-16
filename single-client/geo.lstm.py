@@ -34,10 +34,17 @@ parser.add_argument('--epochs',
                     type=int,
                     required=False)
 
+parser.add_argument('--folder', 
+                    help='Provide the Dataset folder', 
+                    default='one-trip', 
+                    type=str,
+                    required=False)
+
 args = parser.parse_args()
 
 INPUT_SEQ = args.input_seq
 EPOCHS = args.epochs
+FOLDER_LOC = args.folder
 COLUMN_NAME = 'geoaltitude'
 CUTOFF_DT = pd.to_datetime('2022-02-26 00:00:00')
 OUTPUT_NAME = args.out
@@ -61,7 +68,8 @@ def read_uni_dataset(dataf):
 
 
 def convert_to_train_test():
-    folder_path = os.path.join('.', 'data', 'geoaltitude')
+    folder_path = os.path.join('.', 'data', 'geoaltitude', f'{FOLDER_LOC}')
+    print(folder_path)
     temp_store = pd.DataFrame()
 
     for filename in os.listdir(folder_path):

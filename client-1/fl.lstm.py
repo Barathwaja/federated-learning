@@ -14,8 +14,8 @@ start_time = time.time()
 
 print(f"START TIME - {start_time}")
 
-
 parser = argparse.ArgumentParser(description="A simple command-line")
+
 
 parser.add_argument('--ip', 
                     help='Provide the IP address', 
@@ -38,15 +38,21 @@ parser.add_argument('--out',
                     help='Provide the Graph Name', 
                     default='out.png', 
                     required=False)
+parser.add_argument('--folder', 
+                    help='Provide the Dataset folder', 
+                    default='one-trip', 
+                    type=str,
+                    required=False)
+
 
 args = parser.parse_args()
 
 SERVER_ADDR = f'{args.ip}:{args.port}'
 INPUT_SEQ = args.input_seq
+FOLDER_LOC = args.folder
 EPOCHS = args.epochs
 COLUMN_NAME = 'geoaltitude'
 CUTOFF_DT = pd.to_datetime('2022-02-26 00:00:00')
-FLIGHT_ICAO = 'ad564c'
 OUTPUT_NAME = args.out
 
 
@@ -55,6 +61,7 @@ temp_mape = []
 
 
 def read_uni_dataset(dataf):
+
     dataf = dataf.dropna(subset=[COLUMN_NAME])
 
     df_np = dataf[COLUMN_NAME].to_numpy()
@@ -72,12 +79,11 @@ def read_uni_dataset(dataf):
 
 
 def convert_to_train_test():
-    folder_path = os.path.join('.', 'data', 'geoaltitude')
+    folder_path = os.path.join('.', 'data', 'geoaltitude', f'{FOLDER_LOC}')
     temp_store = pd.DataFrame()
 
     for filename in os.listdir(folder_path):
-        #if filename.endswith('_0.csv'): #ONE TRIP,
-        if filename.startswith(f'{FLIGHT_ICAO}.csv'):
+        if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
             # print(f"File Path - {file_path}")
             df = pd.read_csv(file_path)
@@ -88,7 +94,7 @@ def convert_to_train_test():
     train_df = temp_store[temp_store['datetime'] < CUTOFF_DT]
     test_df = temp_store[temp_store['datetime'] >= CUTOFF_DT]
     return train_df, test_df
-    
+
 
 if __name__ == "__main__":
     train, test = convert_to_train_test()
@@ -114,8 +120,8 @@ if __name__ == "__main__":
     model.summary()
     
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.2),
-                    loss="mae",
-                    metrics=["mape"])
+                  loss="mae",
+                  metrics=["mape"])
 
     ################## LSTM #################
 

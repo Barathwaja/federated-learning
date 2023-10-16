@@ -2,10 +2,11 @@ import os
 import flwr as fl
 import numpy as np
 import pandas as pd
-# import sklearn
+
 from sklearn.cluster import MiniBatchKMeans
 
 import argparse
+
 
 parser = argparse.ArgumentParser(description="A simple command-line")
 
@@ -27,15 +28,20 @@ parser.add_argument('--clusters',
                     help='Provide the Clusters', 
                     default=2, 
                     required=False)
+parser.add_argument('--folder', 
+                    help='Provide the Dataset folder', 
+                    default='one-trip', 
+                    type=str,
+                    required=False)
 
 args = parser.parse_args()
 
 SERVER_ADDR = f'{args.ip}:{args.port}'
 INPUT_SEQ = args.input_seq
 NUM_CLUSTERS = args.clusters
+FOLDER_LOC = args.folder
 COLUMN_NAME = 'geoaltitude'
 CUTOFF_DT = pd.to_datetime('2022-02-26 00:00:00')
-FLIGHT_ICAO = 'ad564c'
 
 def read_uni_dataset(dataf):
     dataf = dataf.dropna(subset=[COLUMN_NAME])
@@ -53,12 +59,11 @@ def read_uni_dataset(dataf):
 
 
 def convert_to_train_test():
-    folder_path = os.path.join('.', 'data', 'geoaltitude')
+    folder_path = os.path.join('.', 'data', 'geoaltitude', f'{FOLDER_LOC}')
     temp_store = pd.DataFrame()
 
     for filename in os.listdir(folder_path):
-        #if filename.endswith('_0.csv'): #ONE TRIP,
-        if filename.startswith(f'{FLIGHT_ICAO}.csv'):
+        if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
             # print(f"File Path - {file_path}")
             df = pd.read_csv(file_path)
@@ -84,8 +89,8 @@ if __name__ == "__main__":
     model = MiniBatchKMeans(n_clusters=10,
                              verbose=False,
                              batch_size=50,
-                             random_state=0)    
-
+                             random_state=0)
+    
     ################ kMeans #################
 
     class kMiniClient(fl.client.NumPyClient):
@@ -100,6 +105,7 @@ if __name__ == "__main__":
                     self.model.cluster_centers_
                 )
             return params
+            
         
         def fit(self, parameters, config):
             

@@ -32,6 +32,7 @@ services:
     command: 
       - '--config.file=/etc/prometheus/prometheus.yaml' 
       - '--storage.tsdb.path=/prometheus' 
+      - '--storage.tsdb.retention.time=50d'
       - '--web.console.libraries=/etc/prometheus/console_libraries' 
       - '--web.console.templates=/etc/prometheus/consoles' 
       - '--web.enable-lifecycle' 

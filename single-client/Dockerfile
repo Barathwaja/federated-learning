@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . $APP_DIR/
 
-CMD ["python", "server.py"]
+CMD ["python", "geo.lstm.py"]

@@ -22,7 +22,6 @@ from flwr.server.client_proxy import ClientProxy
 
 # from .aggregate import aggregate, weighted_loss_avg
 from flwr.server.strategy import Strategy
-from tslearn.clustering import TimeSeriesKMeans
 from sklearn.cluster import KMeans
 import numpy as np
 
@@ -134,7 +133,7 @@ class FedKMeans(Strategy):
         #     config = self.on_fit_config_fn(server_round)
         fit_ins = FitIns(parameters, config)
 
-        # # Sample clients
+        # Sample clients
         sample_size, min_num_clients = self.num_fit_clients(
             client_manager.num_available()
         )
@@ -185,9 +184,7 @@ class FedKMeans(Strategy):
         # Do not aggregate if there are failures and failures are not accepted
         if not self.accept_failures and failures:
             return None, {}
-
-        print("AGGREEE")
-
+        
         # Convert results
         # weights_results = [
         #     (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
@@ -197,25 +194,18 @@ class FedKMeans(Strategy):
 
         parameters_aggregated = []
 
-        # temp = [
-        #     (parameters_to_ndarrays(fit_res.parameters))
-        #     for _, fit_res in results
-        # ]
-        # print(temp)
-
-        all_converted_arrays = []
+        temp_ = []
         for _, fit_res in results:
-            all_converted_arrays.extend(
+            temp_.extend(
                 parameters_to_ndarrays(fit_res.parameters)
             )
 
-        print(np.array(all_converted_arrays))
+        temp_arr = np.array(temp_)
 
-        model = TimeSeriesKMeans(
-                        init=np.array(all_converted_arrays), 
-                        verbose=False, 
-                        metric='euclidean')
-        
+        get_sum_arrays = np.sum(temp_arr, axis=0)
+
+        model = KMeans(init=get_sum_arrays)
+
         print(model.__dict__)
         
         # # Aggregate custom metrics if aggregation fn was provided

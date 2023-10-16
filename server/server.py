@@ -1,19 +1,10 @@
 import flwr as fl
 import socket
-# from fed_knn import FedKnn
-# sfrom fedkmeans import FedKMeans
-#from fedavg_modified import FedAvg
+import argparse
+# from fedkmeans import FedKMeans
 from fedavg import FedAvg
 import time
 
-
-import os
-import flwr as fl
-import numpy as np
-import pandas as pd
-
-import tensorflow as tf
-import argparse
 
 parser = argparse.ArgumentParser(description="A simple command-line")
 
@@ -29,29 +20,33 @@ parser.add_argument('--port',
 parser.add_argument('--num_rounds', 
                     help='Provide the Time-Series Window Size', 
                     default=3, 
+                    type=int,
+                    required=False)
+parser.add_argument('--fit_clients', 
+                    help='Provide the Fit Clients', 
+                    default=2, 
+                    type=int,
                     required=False)
 
 args = parser.parse_args()
 
 SERVER_ADDR = f'{args.ip}:{args.port}'
 NUM_ROUNDS = args.num_rounds
-
-
-
 SERVER_ADDR = f'{args.ip}:{args.port}'
+NUM_CLIENTS = args.fit_clients
 
 print(f"server addr - {SERVER_ADDR}")
 
 start_time = time.time()
 
 strategy = FedAvg(
-    min_available_clients=2,
-    min_fit_clients=2
+    min_available_clients=NUM_CLIENTS,
+    min_fit_clients=NUM_CLIENTS,
+    min_evaluate_clients=NUM_CLIENTS
 )
 
 print("--------------------")
 print(f"START TIME - {start_time}")
-
 
 fl.server.start_server(
     server_address=SERVER_ADDR,

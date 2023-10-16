@@ -2,11 +2,10 @@ import os
 import flwr as fl
 import numpy as np
 import pandas as pd
-
+# import sklearn
 from sklearn.cluster import MiniBatchKMeans
 
 import argparse
-
 
 parser = argparse.ArgumentParser(description="A simple command-line")
 
@@ -81,51 +80,53 @@ if __name__ == "__main__":
 
     ################ kMeans #################
 
-    model = MiniBatchKMeans(n_clusters=1,
+    # sklearn.set_config(enable_metadata_routing=True)
+    model = MiniBatchKMeans(n_clusters=10,
                              verbose=False,
-                             random_state=0)
-    
+                             batch_size=50,
+                             random_state=0)    
+
     ################ kMeans #################
 
-    class kMeansClient(fl.client.NumPyClient):
+    class kMiniClient(fl.client.NumPyClient):
         def __init__(self, model) -> None:
             self.model = model
 
         def get_parameters(self, config):
-            compute_param = []
+            params = []
 
             if hasattr(self.model, "cluster_centers_"):
-                compute_param.append(
+                params.append(
                     self.model.cluster_centers_
                 )
-            return compute_param
+            return params
         
         def fit(self, parameters, config):
             
-            if hasattr(self.model, "cluster_centers_"):
-                get_compute_param = np.array(parameters)
+            # if hasattr(self.model, "cluster_centers_"):
+            #     get_compute_param = np.array(parameters)
                 
-                if hasattr(get_compute_param, "__array__"):
-                    self.model.init = get_compute_param[0]
+            #     if hasattr(get_compute_param, "__array__"):
+            #         self.model.init = get_compute_param[0]
 
-            model.fit(X_train, y_train) #y_train = Ignored
+            self.model.fit(X_train, y_train) #y_train = Ignored
 
-            return self.get_parameters(self.model), len(X_train), {}
+            return self.get_parameters(self.model), len(X_train), {"accuracy": 0.95}
 
 
-        def evaluate(self, parameters, config):
-            if hasattr(self.model, "cluster_centers_"):
-                get_compute_param = np.array(parameters)
+        # def evaluate(self, parameters, config):
+        #     if hasattr(self.model, "cluster_centers_"):
+        #         get_compute_param = np.array(parameters)
                 
-                if hasattr(get_compute_param, "__array__"):
-                    self.model.init = get_compute_param[0]
+        #         if hasattr(get_compute_param, "__array__"):
+        #             self.model.init = get_compute_param[0]
             
-            get_cluster_labels_ = model.predict(X_test)
-            absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
-            mape_ = np.mean(absolute_percentage_errors) * 100
+        #     get_cluster_labels_ = model.predict(X_test)
+        #     absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
+        #     mape_ = np.mean(absolute_percentage_errors) * 100
 
-            return float(0), len(X_test), {"mape": mape_}
+        #     return float(0), len(X_test), {"mape": mape_}
 
 
     fl.client.start_numpy_client(server_address=SERVER_ADDR, 
-                                 client=kMeansClient(model))
+                                 client=kMiniClient(model))

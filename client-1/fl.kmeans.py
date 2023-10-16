@@ -2,12 +2,17 @@ import os
 import flwr as fl
 import numpy as np
 import pandas as pd
-
 from tslearn.clustering import TimeSeriesKMeans
-from sklearn.metrics import mean_absolute_percentage_error
-
 import argparse
+import time
 
+print("--------------------")
+
+start_time = time.time()
+
+print(f"START TIME - {start_time}")
+
+temp_mape = []
 
 parser = argparse.ArgumentParser(description="A simple command-line")
 
@@ -25,16 +30,17 @@ parser.add_argument('--input_seq',
                     default=4, 
                     type=str,
                     required=False)
-parser.add_argument('--clusters', 
-                    help='Provide the Clusters', 
+parser.add_argument('--num_clusters', 
+                    help='Provide the Number of Clusters', 
                     default=2, 
+                    type=int,
                     required=False)
 
 args = parser.parse_args()
 
 SERVER_ADDR = f'{args.ip}:{args.port}'
 INPUT_SEQ = args.input_seq
-NUM_CLUSTERS = args.clusters
+NUM_CLUSTERS = args.num_clusters
 COLUMN_NAME = 'geoaltitude'
 CUTOFF_DT = pd.to_datetime('2022-02-26 00:00:00')
 FLIGHT_ICAO = 'ad564c'
@@ -82,7 +88,7 @@ if __name__ == "__main__":
 
     ################ kMeans #################
 
-    model = TimeSeriesKMeans(n_clusters=1,
+    model = TimeSeriesKMeans(n_clusters=NUM_CLUSTERS,
                              verbose=False,
                              random_state=0)
     
@@ -125,8 +131,17 @@ if __name__ == "__main__":
             absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
             mape_ = np.mean(absolute_percentage_errors) * 100
 
+            temp_mape.append(mape_)
             return float(0), len(X_test), {"mape": mape_}
 
 
     fl.client.start_numpy_client(server_address=SERVER_ADDR, 
                                  client=kMeansClient(model))
+    
+    print(f'Mape - {temp_mape}')
+
+    end_time = time.time()
+    print("--------------------")
+    print(f"END TIME - {end_time}")
+
+    print(f"ELAPSED TIME -  {end_time - start_time}")

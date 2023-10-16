@@ -2,8 +2,11 @@ import os
 import flwr as fl
 import numpy as np
 import pandas as pd
-from tslearn.clustering import TimeSeriesKMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+import tensorflow as tf
 import argparse
+from tslearn.clustering import TimeSeriesKMeans
 import time
 
 print("--------------------")
@@ -12,38 +15,35 @@ start_time = time.time()
 
 print(f"START TIME - {start_time}")
 
-temp_mape = []
 
 parser = argparse.ArgumentParser(description="A simple command-line")
 
 # Add arguments
-parser.add_argument('--ip', 
-                    help='Provide the IP address', 
-                    default="0.0.0.0", 
-                    required=False)
-parser.add_argument('--port', 
-                    help='Provide the Port address', 
-                    default="9092", 
-                    required=False)
 parser.add_argument('--input_seq', 
                     help='Provide the Time-Series Window Size', 
                     default=4, 
-                    type=str,
                     required=False)
+
+parser.add_argument('--out', 
+                    help='Provide the Graph Name', 
+                    default='out.png', 
+                    required=False)
+
 parser.add_argument('--num_clusters', 
                     help='Provide the Number of Clusters', 
                     default=2, 
                     type=int,
                     required=False)
 
+
+
 args = parser.parse_args()
 
-SERVER_ADDR = f'{args.ip}:{args.port}'
 INPUT_SEQ = args.input_seq
 NUM_CLUSTERS = args.num_clusters
 COLUMN_NAME = 'geoaltitude'
 CUTOFF_DT = pd.to_datetime('2022-02-26 00:00:00')
-FLIGHT_ICAO = 'adc0fb'
+OUTPUT_NAME = args.out
 
 def read_uni_dataset(dataf):
     dataf = dataf.dropna(subset=[COLUMN_NAME])
@@ -65,8 +65,7 @@ def convert_to_train_test():
     temp_store = pd.DataFrame()
 
     for filename in os.listdir(folder_path):
-        #if filename.endswith('_0.csv'): #ONE TRIP,
-        if filename.startswith(f'{FLIGHT_ICAO}.csv'):
+       if filename.endswith('.csv'):
             file_path = os.path.join(folder_path, filename)
             # print(f"File Path - {file_path}")
             df = pd.read_csv(file_path)
@@ -92,53 +91,33 @@ if __name__ == "__main__":
                              verbose=False,
                              random_state=0)
     
-    ################ kMeans #################
+    model.fit(X_train, y_train)
 
-    class kMeansClient(fl.client.NumPyClient):
-        def __init__(self, model) -> None:
-            self.model = model
+    get_cluster_labels_ = model.predict(X_test)
+    absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
+    mape_ = np.mean(absolute_percentage_errors) * 100
 
-        def get_parameters(self, config):
-            compute_param = []
-
-            if hasattr(self.model, "cluster_centers_"):
-                compute_param.append(
-                    self.model.cluster_centers_
-                )
-            return compute_param
-        
-        def fit(self, parameters, config):
-            
-            if hasattr(self.model, "cluster_centers_"):
-                get_compute_param = np.array(parameters)
-                
-                if hasattr(get_compute_param, "__array__"):
-                    self.model.init = get_compute_param[0]
-
-            model.fit(X_train, y_train) #y_train = Ignored
-
-            return self.get_parameters(self.model), len(X_train), {}
-
-
-        def evaluate(self, parameters, config):
-            if hasattr(self.model, "cluster_centers_"):
-                get_compute_param = np.array(parameters)
-                
-                if hasattr(get_compute_param, "__array__"):
-                    self.model.init = get_compute_param[0]
-            
-            get_cluster_labels_ = model.predict(X_test)
-            absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
-            mape_ = np.mean(absolute_percentage_errors) * 100
-
-            temp_mape.append(mape_)
-            return float(0), len(X_test), {"mape": mape_}
-
-
-    fl.client.start_numpy_client(server_address=SERVER_ADDR, 
-                                 client=kMeansClient(model))
+    print(f"Eval MAPE - {mape_}")
     
-    print(f'Mape - {temp_mape}')
+    # test_data = np.concatenate((X_test, model.predict(X_test).reshape(-1, 1)), axis=1)
+
+    # # # Create a line plot to visualize the clusters for training and test data
+    # # sns.set()
+    # # plt.figure(figsize=(20, 6))
+
+    # # # Iterate through the clusters and plot the time series data for test data
+    # # for cluster_id in range(NUM_CLUSTERS):
+    # #     cluster_data = test_data[test_data[:, -1] == cluster_id, :-1]
+    # #     for ts in cluster_data:
+    # #         plt.plot(ts, alpha=0.6, linestyle='--', label=f'Test Cluster {cluster_id}')
+
+    # # plt.xlabel('Time')
+    # # plt.ylabel('Value')
+    # # plt.title('Time Series Clustering')
+    # # plt.legend()
+    # # plt.savefig(f'./output/{OUTPUT_NAME}', dpi=300)
+    
+    ################ kMeans #################
 
     end_time = time.time()
     print("--------------------")

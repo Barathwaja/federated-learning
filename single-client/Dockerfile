@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . $APP_DIR/
 
-CMD ["python", "geo.lstm.py"]
+ENTRYPOINT ["python", "geo.lstm.py"]

@@ -131,12 +131,31 @@ if __name__ == "__main__":
                 if hasattr(get_compute_param, "__array__"):
                     self.model.init = get_compute_param[0]
             
-            get_cluster_labels_ = model.predict(X_test)
-            absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
-            mape_ = np.mean(absolute_percentage_errors) * 100
+            # get_cluster_labels_ = model.predict(X_test)
+            # absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
+            # mape_ = np.mean(absolute_percentage_errors) * 100
 
+            # temp_mape.append(mape_)
+
+            get_cluster_labels_ = model.predict(X_test)
+
+            num_data_points = len(y_test)
+            absolute_percentage_errors = np.zeros(num_data_points, dtype="object")
+
+            for i in range(num_data_points):
+                cluster_label = get_cluster_labels_[i]
+                cluster_center = model.cluster_centers_[cluster_label]
+                y_true = y_test[i]
+                
+                # Calculate absolute percentage error for each data point
+                if y_true != 0:
+                    absolute_percentage_errors[i] = np.abs((y_true - cluster_center) / y_true)
+
+            # Calculate the overall MAPE
+            mape_ = np.mean(absolute_percentage_errors) * 100
+            print(mape_)
             temp_mape.append(mape_)
-            return float(0), len(X_test), {"mape": mape_}
+            return float(0), len(X_test), {"mape": np.mean(mape_)}
 
 
     fl.client.start_numpy_client(server_address=SERVER_ADDR, 

@@ -4,9 +4,11 @@ networks:
     external: true
 volumes: 
   prometheus_data: {} 
+  grafana_data: {}
+  
 services: 
   node-exporter: 
-    image: prom/node-exporter:latest 
+    image: prom/node-exporter:v1.6.1 
     container_name: node-exporter
     restart: unless-stopped 
     volumes: 
@@ -23,7 +25,7 @@ services:
     networks: 
       - custom-net 
   prometheus: 
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.47.1
     container_name: prometheus 
     restart: unless-stopped 
     volumes: 
@@ -41,7 +43,7 @@ services:
     networks: 
       - custom-net 
   grafana: 
-    image: grafana/grafana:latest 
+    image: grafana/grafana:10.1.5 
     user: "1001" 
     container_name: grafana 
     ports: 

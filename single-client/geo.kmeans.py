@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import tensorflow as tf
 import argparse
 from tslearn.clustering import TimeSeriesKMeans
 import time
@@ -100,28 +99,43 @@ if __name__ == "__main__":
     model.fit(X_train, y_train)
 
     get_cluster_labels_ = model.predict(X_test)
-    absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
+
+    num_data_points = len(y_test)
+    absolute_percentage_errors = np.zeros(num_data_points, dtype="object")
+
+    for i in range(num_data_points):
+        cluster_label = get_cluster_labels_[i]
+        cluster_center = model.cluster_centers_[cluster_label]
+        y_true = y_test[i]
+        
+        # Calculate absolute percentage error for each data point
+        if y_true != 0:
+            absolute_percentage_errors[i] = np.abs((y_true - cluster_center) / y_true)
+
+    # Calculate the overall MAPE
     mape_ = np.mean(absolute_percentage_errors) * 100
 
     print(f"Eval MAPE - {mape_}")
-    
-    # test_data = np.concatenate((X_test, model.predict(X_test).reshape(-1, 1)), axis=1)
 
-    # # # Create a line plot to visualize the clusters for training and test data
-    # # sns.set()
-    # # plt.figure(figsize=(20, 6))
+    # absolute_percentage_errors = np.abs((y_test - model.cluster_centers_[get_cluster_labels_]) / y_test)
+    # mape_ = np.mean(absolute_percentage_errors) * 100
 
-    # # # Iterate through the clusters and plot the time series data for test data
-    # # for cluster_id in range(NUM_CLUSTERS):
-    # #     cluster_data = test_data[test_data[:, -1] == cluster_id, :-1]
-    # #     for ts in cluster_data:
-    # #         plt.plot(ts, alpha=0.6, linestyle='--', label=f'Test Cluster {cluster_id}')
+    # print(f"Eval MAPE - {mape_}")
+    # # Create a line plot to visualize the clusters for training and test data
+    # sns.set()
+    # plt.figure(figsize=(20, 6))
 
-    # # plt.xlabel('Time')
-    # # plt.ylabel('Value')
-    # # plt.title('Time Series Clustering')
-    # # plt.legend()
-    # # plt.savefig(f'./output/{OUTPUT_NAME}', dpi=300)
+    # # Iterate through the clusters and plot the time series data for test data
+    # for cluster_id in range(NUM_CLUSTERS):
+    #     cluster_data = test_data[test_data[:, -1] == cluster_id, :-1]
+    #     for ts in cluster_data:
+    #         plt.plot(ts, alpha=0.6, linestyle='--', label=f'Test Cluster {cluster_id}')
+
+    # plt.xlabel('Time')
+    # plt.ylabel('Value')
+    # plt.title('Time Series Clustering')
+    # plt.legend()
+    # plt.savefig(f'./output/{OUTPUT_NAME}', dpi=300)
     
     ################ kMeans #################
 

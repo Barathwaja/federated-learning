@@ -114,20 +114,20 @@ if __name__ == "__main__":
 
     eval_loss, eval_mape = model.evaluate(X_test, y_test)
     
-    fit_loss = history.history['loss']
-    fit_mape = history.history['mape']
+    # fit_loss = history.history['loss']
+    # fit_mape = history.history['mape']
 
-    # Create a line plot using Seaborn
-    sns.set(style="whitegrid")
-    plt.figure(figsize=(10, 5))  # Adjust the figure size as needed
-    sns.lineplot(x=range(1, len(fit_loss) + 1), y=fit_loss, label='Training Loss')
-    sns.lineplot(x=range(1, len(fit_mape) + 1), y=fit_mape, label='Training MAPE')
+    # # Create a line plot using Seaborn
+    # sns.set(style="whitegrid")
+    # plt.figure(figsize=(10, 5))  # Adjust the figure size as needed
+    # sns.lineplot(x=range(1, len(fit_loss) + 1), y=fit_loss, label='Training Loss')
+    # sns.lineplot(x=range(1, len(fit_mape) + 1), y=fit_mape, label='Training MAPE')
 
-    plt.title('Training Loss (MAE) and MAPE')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss / MAPE')
-    plt.legend()
-    plt.savefig(f'./output/{OUTPUT_NAME}', dpi=300)
+    # plt.title('Training Loss (MAE) and MAPE')
+    # plt.xlabel('Epochs')
+    # plt.ylabel('Loss / MAPE')
+    # plt.legend()
+    # plt.savefig(f'./output/{OUTPUT_NAME}', dpi=300)
 
     ################## LSTM #################
 

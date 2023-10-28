@@ -140,27 +140,27 @@ if __name__ == "__main__":
             self.model.set_weights(parameters)
             history = self.model.fit(X_train, y_train, epochs = EPOCHS)
 
-            fit_loss = history.history['loss']
-            fit_mape = history.history['mape']
+            # fit_loss = history.history['loss']
+            # fit_mape = history.history['mape']
 
-            sns.set(style="whitegrid")
-            plt.figure(figsize=(10, 5))
+            # sns.set(style="whitegrid")
+            # plt.figure(figsize=(10, 5))
 
-            plt.plot(fit_loss)
-            plt.plot(self.num_of_round)
-            plt.title('Training Loss v/s Num of Rounds')
-            plt.ylabel('Loss (MAE)')
-            plt.xlabel('Number of Rounds')
-            plt.savefig(f'./output/loss_{OUTPUT_NAME}', dpi=300)
-            plt.show(block=False)
+            # plt.plot(fit_loss)
+            # plt.plot(self.num_of_round)
+            # plt.title('Training Loss v/s Num of Rounds')
+            # plt.ylabel('Loss (MAE)')
+            # plt.xlabel('Number of Rounds')
+            # plt.savefig(f'./output/loss_{OUTPUT_NAME}', dpi=300)
+            # plt.show(block=False)
 
-            plt.plot(fit_mape)
-            plt.plot(self.num_of_round)
-            plt.title('Training Loss v/s Num of Rounds')
-            plt.ylabel('Metrics (MAPE)')
-            plt.xlabel('Number of Rounds')
-            plt.savefig(f'./output/mape_{OUTPUT_NAME}', dpi=300)
-            plt.show(block=False)
+            # plt.plot(fit_mape)
+            # plt.plot(self.num_of_round)
+            # plt.title('Training Loss v/s Num of Rounds')
+            # plt.ylabel('Metrics (MAPE)')
+            # plt.xlabel('Number of Rounds')
+            # plt.savefig(f'./output/mape_{OUTPUT_NAME}', dpi=300)
+            # plt.show(block=False)
 
             return self.model.get_weights(), len(X_train), {}
 
